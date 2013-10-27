@@ -27,6 +27,10 @@ RSpec.configure do |config|
 
   config.before(:each) do
     DatabaseCleaner.start
+    category = StudentActionCategory.create name: 'attendance'
+    StudentActionType.create name: 'on-time', student_action_category_id: category.id, value: 1
+    StudentActionType.create name: 'tardy', student_action_category_id: category.id, value: -1
+    StudentActionType.create name: 'absent', student_action_category_id: category.id, value: -2
   end
 
   config.after(:each) do

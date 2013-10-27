@@ -1,0 +1,17 @@
+.grid-container.swipe
+  .icon-container
+    %ul#student-icon-list.sortable
+      - @students.each do |student|
+        %li.student-icon{data: {id: student.id}}
+          .initials<
+            = student.first_name[0].upcase
+            = student.last_name[0].downcase
+          .full-name
+            = student.first_name
+            = student.last_name
+          .positive-count
+            = student.positive(student.collect_student_actions)
+          .negative-count
+            = student.negative(student.collect_student_actions)
+          .behavior-select.hidden
+            = select_tag "attendances[status_ids][#{student.id}]", options_for_select(Attendance::STATUSES, attendance_value_for_student(@attendances, student))

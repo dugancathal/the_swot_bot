@@ -81,6 +81,16 @@ class Teachers::CoursesController < Teachers::BaseController
     end
   end
 
+  def submit_attendance
+    @course = Course.includes(:enrollments).find(params[:id])
+    params[:attendances][:status_ids].each do |student_id, status_id|
+      enrollment_id = @course.enrollments.find {|e| e.student_id == student_id.to_i}.id
+      a = Attendance.where(enrollment_id: enrollment_id, date: Date.today).first_or_create(status_id: status_id)
+      a.status_id = status_id
+      a.save if a.status_id_changed?
+    end
+  end
+
   private
 
   def date_params

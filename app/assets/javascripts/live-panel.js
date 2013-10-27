@@ -1,3 +1,9 @@
+function confirmMessage(message) {
+  $('<p class="confirm-message">'+message+'</p>').insertBefore('.icon-container').fadeOut(2000, function(){
+    $(this).remove();
+  });
+}
+
 $(document).ready(function() {
 
   $('.other-function-container').hide();
@@ -9,12 +15,6 @@ $(document).ready(function() {
   $('.behavior-container .student-icon').click(function() {
       $(this).toggleClass('active');
   });
-
-  function confirmMessage(message) {
-    $('<p class="confirm-message">'+message+'</p>').insertBefore('.icon-container').fadeOut(2000, function(){
-      $(this).remove();
-    });
-  }
 
   function adjustIconValues(icon, action) {
     var positive_count = icon.find('.positive-count').html();
@@ -46,7 +46,7 @@ $(document).ready(function() {
 // ==============FRONT PAGE BEHAVIOR ACTIONS=====================
 
   $('.behavior-container .submit-button').click(function(event) {
-    var submit_action = $(this).attr('id'); 
+    var submit_action = $(this).attr('id');
     var data = [];
     var button_pushed = $(this);
 
@@ -60,12 +60,12 @@ $(document).ready(function() {
     var course_id = $('#course-id data').attr('id');
     var url = ('/live_class');
     var dataToSend = {action_name: submit_action,
-                      student_ids : data, 
+                      student_ids : data,
                       course_id: course_id}
-    // console.log(dataToSend);                  
-           
+    // console.log(dataToSend);
+
     $.post(url, dataToSend);
-  
+
     confirmMessage("Student Behaviors Updated");
     $('.student-icon').removeClass('active');
     data = [];
@@ -74,7 +74,7 @@ $(document).ready(function() {
 // ==================OTHER BEHAVIOR ACTIONS========================
 
   $('#other').click(function() {
-    
+
     $('.grid-container').hide();
     $('.behavior-container').hide();
     $('.other-function-container').show();
@@ -83,7 +83,7 @@ $(document).ready(function() {
       var submit_action = $(this).attr('id');
       var data = [];
       var button_pushed = $(this);
-      
+
       $('.behavior-container .active').each(function(){
         data.push($(this).data('id'));
         adjustIconValues($(this), button_pushed);
@@ -109,94 +109,33 @@ $(document).ready(function() {
 // ===============ATTENDANCE ACTIONS===================
 
   $('#attendance').click(function(){
-
     $('.behavior-container').hide();
-    $('.attendance-container').show().find('.student-icon').addClass('on_time');
-   
-    var course_id = $('#course-id data').attr('id');
-    var get_url = '/teachers/courses/'+course_id+'/liveclass'
-    var on_time;
-    var tardy;
-    var absent;
-    var icon;
+    $('.attendance-container').show().find('.student-icon');
 
-    // get the current attendance from db (json)
-    //set the classes for each icon to the attendance status
-    $.get(get_url, function(response){
-      // console.log(response);
-      on_time = response.attendance['on-time']
-      tardy = response.attendance.tardy
-      absent = response.attendance.absent
-      
-      function set_class(status_array, class_name){
-        $.each(status_array, function(i, v){
-          icon = $(".attendance-container [data-id='" + v + "']");
-          icon.removeClass();
-          icon.addClass('student-icon '+class_name+'')
-        });
-      }
-
-      set_class(on_time, "on_time");
-      set_class(tardy, "tardy");
-      set_class(absent, "absent");
-    }, 'json');
-
-
-    function toggleAttendance(currentIcon){
-      // console.log(currentIcon);
-      if($(currentIcon).hasClass('on_time')){
-        $(currentIcon).removeClass('on_time');
-        $(currentIcon).addClass('tardy');
-      }
-      else if($(currentIcon).hasClass('tardy')){
-        $(currentIcon).removeClass('tardy');
-        $(currentIcon).addClass('absent');
-      }
-      else if($(currentIcon).hasClass('absent')){
-        $(currentIcon).removeClass('absent');
-        $(currentIcon).addClass('on_time');
-      }
-    }
-    
-    $('.attendance-container .student-icon').click(function() {
-      // console.log("clicked");
-      toggleAttendance(this);  
+    $('.attendance-container .student-icon').each(function() {
+      var icon = $(this);
+      var attendance = icon.data('attendance') || icon.find('option[selected]').text();
+      icon.removeClass();
+      icon.addClass("student-icon " + attendance);
+      icon.data('attendance', attendance);
     });
+  });
 
-    $('#submit').click(function(){
-      var data = [];
-      var tardy_posts = [];
-      var absent_posts = [];
-      var on_time_posts = [];
+  function toggleAttendance(currentIcon){
+    klasses = {'present': 'tardy', 'tardy': 'absent', 'absent': 'present'};
+    var icon = $(currentIcon);
+    var select = icon.find('.behavior-select select')[0];
+    var attendance = icon.data('attendance');
 
-      var submit_action = $(this).attr('id');
+    icon.removeClass(attendance);
+    icon.addClass(klasses[attendance]);
+    icon.data('attendance', klasses[attendance]);
 
-      $('.tardy').each(function(){
-        tardy_posts.push($(this).data('id')); // Student ID
-      });
+    select.selectedIndex = (select.selectedIndex + 1) % select.options.length;
+  }
 
-      $('.absent').each(function(){
-        absent_posts.push($(this).data('id')); // Student ID
-      });
-
-      $('.on_time').each(function(){
-        on_time_posts.push($(this).data('id')); // Student ID
-      });
-
-      var course_id = $('#course-id data').attr('id');
-      url = ('/live_class');
-      dataToSend =  {
-                    tardy : tardy_posts,
-                    absent : absent_posts,
-                    on_time : on_time_posts,
-                    course_id : course_id
-                    }
-
-      $.post(url, dataToSend);
-      confirmMessage("Student Attendance Updated");
-      $('.attendance-container').hide();
-      $('.behavior-container').show();
-    });
+  $('.attendance-container .student-icon').click(function() {
+    toggleAttendance(this);
   });
 
 // ===================ASSIGNMENT ACTIONS======================
@@ -215,7 +154,7 @@ $(document).ready(function() {
       // console.log(response);
       missing_assignments = response.assignments.missing_assignments;
       console.log(missing_assignments);
-      
+
       function set_class(status_array){
         $.each(status_array, function(i, v){
           icon = $(".assignments-container [data-id='" + v + "']");
@@ -235,7 +174,7 @@ $(document).ready(function() {
     $('.assignment-button').click(function(){
       // var submit_action = $(this).attr('id');
       var data = [];
-      
+
       $('.missing-assignment').each(function(){
         data.push($(this).data('id'));
       });

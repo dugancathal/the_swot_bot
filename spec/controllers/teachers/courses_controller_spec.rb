@@ -36,4 +36,39 @@ describe Teachers::CoursesController do
     assigns(:date_range).first.should eq(Date.parse date_params[:from])
     assigns(:date_range).last.should eq(Date.parse date_params[:to])
   end
+
+  describe 'POST #submit_attendance' do
+    def attendance_data
+      {
+        attendances: {
+          status_ids: course.students.each_with_object({}) {|student, h| h[student.id] = rand(1..3) }
+        }
+      }
+    end
+
+    it 'succeeds' do
+      post :submit_attendance, {id: course.id, format: :js}.merge(attendance_data), session
+      response.should be_success
+    end
+
+    it 'creates attendance records for all the students in the course' do
+      expect {
+        post :submit_attendance, {id: course.id, format: :js}.merge(attendance_data), session
+      }.to change{Attendance.count}.by(course.students.count)
+    end
+
+    it 'updates attendance records if they already exist' do
+      post :submit_attendance, {id: course.id, format: :js}.merge(attendance_data), session
+      expect {
+        post :submit_attendance, {id: course.id, format: :js}.merge(attendance_data), session
+      }.to change{Attendance.count}.by(0)
+    end
+
+    it 'updates student actions if attendance has already been submitted' do
+      post :submit_attendance, {id: course.id, format: :js}.merge(attendance_data), session
+      expect {
+        post :submit_attendance, {id: course.id, format: :js}.merge(attendance_data), session
+      }.to change{StudentAction.count}.by(0)
+    end
+  end
 end

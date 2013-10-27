@@ -3,11 +3,11 @@ class Teachers::BaseController < ApplicationController
 
   #TODO: Move this into model & refactor
   def student_attendance(students, course)
-    attendances = {'on-time' => [], 'tardy' => [], 'absent' => []}
+    attendances = {'present' => [], 'tardy' => [], 'absent' => []}
     students.each do |student|
       enrollment = Enrollment.where(course_id: course.id, student_id: student.id).first
       attendance = Attendance.where(enrollment_id: enrollment.id, date: Date.today).first_or_initialize(status_id: 1)
-      attendances[Attendance::STUDENT_ACTION_STATUS_NAMES[Attendance::STATUS_IDS[attendance.status_id]]] << student.id
+      attendances[Attendance::STATUS_IDS[attendance.status_id]] << student.id
     end
     attendances
   end

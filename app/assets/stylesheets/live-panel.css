@@ -34,7 +34,7 @@
   border-radius: 6px;
 }
 
-.active, .on_time, .complete {
+.active, .present, .complete {
   width: 52px;
   height: 52px;
   padding: 10px;
@@ -193,4 +193,8 @@
   padding: 1.5px;
   padding-top: 0px;
   border: 1px solid #CCCCCC;   
+}
+
+.hidden {
+  display: none;
 }

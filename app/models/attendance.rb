@@ -30,6 +30,10 @@ class Attendance < ActiveRecord::Base
 
   def submit_student_action
     student_action_type = StudentActionType.where(name: STUDENT_ACTION_STATUS_NAMES[STATUS_IDS[status_id]]).first
-    StudentAction.where(date: Date.today, student_action_type_id: student_action_type.id, enrollment_id: enrollment_id).first_or_create
+    action = StudentAction.includes(:student_action_type => :category)
+      .where(date: Date.today, student_action_categories: {name: 'attendance'}, enrollment_id: enrollment_id).first_or_create
+    action.student_action_type_id = student_action_type.id
+    action.save if action.student_action_type_id_changed?
+    true
   end
 end

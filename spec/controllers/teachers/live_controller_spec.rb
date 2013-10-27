@@ -10,11 +10,6 @@ describe Teachers::LiveController do
       @course = FactoryGirl.create :course
       @current_user = @course.teacher
 
-      category = StudentActionCategory.create name: 'attendance'
-      category.student_action_types.create name: 'on-time', value: 1
-      category.student_action_types.create name: 'tardy', value: 0
-      category.student_action_types.create name: 'absent', value: -1
-
       students = @course.students = FactoryGirl.create_list :student, 6
       @attendance_data = {
         'on_time' => students[0..1].map(&:id),
