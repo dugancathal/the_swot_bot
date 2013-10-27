@@ -1,21 +1,23 @@
-<%= render 'student_grid' %>
+<%= form_tag submit_actions_teachers_course_path(@course), remote: true, id: 'action-form' do %>
+  <%= render 'student_grid' %>
 
-<div class="submit-button-container">
-  <ul>
-    <li><button class="btn btn-block btn-large other-button" id="attendance">Attendance</button></li>
-    <li><button class="btn btn-block btn-large other-button" id="assignments">Assignments</button></li>
-    <li><button class="btn btn-block btn-large other-button" id="other">Other Actions</button></li>
-    
-    <div class="green-list">
-      <li><button class="positive-action btn btn-large btn-block btn-info submit-button" id="high-quality">High-Quality</button></li>
-      <li><button class="positive-action btn btn-large btn-block btn-info submit-button" id="participation">Participation</button></li>
-      <li><button class="positive-action btn btn-large btn-block btn-info submit-button" id="working-independently">Working Independently</button></li>
-    </div>
+  <div class="submit-button-container">
+    <ul>
+      <li><%= link_to 'Attendance', '#', class: 'btn btn-block btn-large other-button', id: 'attendance' %></li>
+      <li><%= link_to 'Assignments', '#', class: 'btn btn-block btn-large other-button', id: 'assignments' %></li>
+      <li><%= link_to 'Other Actions', '#', class: 'btn btn-block btn-large other-button', id: 'other' %></li>
+      
+      <div class="green-list">
+        <li><%= submit_tag 'High Quality', class: 'positive-action btn btn-large btn-block btn-info' %></li>
+        <li><%= submit_tag 'Participation', class: 'positive-action btn btn-large btn-block btn-info' %></li>
+        <li><%= submit_tag 'Working Independently', class: 'positive-action btn btn-large btn-block btn-info' %></li>
+      </div>
 
-    <div class="red-list">
-      <li><button class="negative-action btn btn-large btn-block btn-danger red submit-button" id="baby-attack">Baby-Attack</button></li>
-      <li><button class="negative-action btn btn-large btn-block btn-danger red submit-button" id="causing-distractions">Causing Distraction</button></li>
-      <li><button class="negative-action btn btn-large btn-block btn-danger red submit-button" id="sloppy-slant">Sloppy SLANT</button></li>
-    </div>
-  </ul>
-</div>
+      <div class="red-list">
+        <li><%= submit_tag 'Baby-Attack', class: 'negative-action btn btn-large btn-block btn-danger' %></li>
+        <li><%= submit_tag 'Causing Distractions', class: 'negative-action btn btn-large btn-block btn-danger' %></li>
+        <li><%= submit_tag 'Sloppy SLANT', class: 'negative-action btn btn-large btn-block btn-danger' %></li>
+      </div>
+    </ul>
+  </div>
+<% end %>

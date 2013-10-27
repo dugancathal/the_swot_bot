@@ -1,0 +1,16 @@
+confirmMessage('Student Behaviors Updated');
+
+$('.student-icon.active').each(function() {
+  var icon = $(this);
+
+  var klass = '.positive-count';
+  if(<%= j(@action_type.value) %> < 0) {
+    klass = '.negative-count';
+  }
+
+  var value = icon.find(klass).text();
+  icon.find(klass).text(parseInt(value) + Math.abs(<%= j(@action_type.value) %>));
+});
+
+$('.student-icon').removeClass('active');
+$('.student-icon input[type=checkbox]').attr('checked', false);

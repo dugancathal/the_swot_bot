@@ -15,3 +15,4 @@
             = student.negative(student.collect_student_actions)
           .behavior-select.hidden
             = select_tag "attendances[status_ids][#{student.id}]", options_for_select(Attendance::STATUSES, attendance_value_for_student(@attendances, student))
+            = check_box_tag "behaviors[student_ids][]", student.id

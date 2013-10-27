@@ -5,30 +5,14 @@ function confirmMessage(message) {
 }
 
 $(document).ready(function() {
-
-  $('.other-function-container').hide();
-  $('.attendance-container').hide();
-  $('.assignments-container').hide();
-
-  // $('.sortable').sortable();
+  $('.classroom').hide();
+  $('.behavior-container').show();
 
   $('.behavior-container .student-icon').click(function() {
       $(this).toggleClass('active');
+      var checkbox = $(this).find('input[type=checkbox]')[0];
+      checkbox.checked = checkbox.checked ? false : true;
   });
-
-  function adjustIconValues(icon, action) {
-    var positive_count = icon.find('.positive-count').html();
-    var negative_count = icon.find('.negative-count').html();
-
-    if(action.hasClass('positive-action')){
-      var new_positive_count = (parseInt(positive_count) + 1)
-      icon.find('.positive-count').html(new_positive_count);
-    }
-    if(action.hasClass('negative-action')){
-      var new_negative_count = (parseInt(negative_count) + 1)
-      icon.find('.negative-count').html(new_negative_count);
-    }
-  }
 
 // ===============IPAD SPECIFIC EVENTS====================
 
@@ -43,74 +27,26 @@ $(document).ready(function() {
     $('.student-icon').removeClass('active');
   });
 
-// ==============FRONT PAGE BEHAVIOR ACTIONS=====================
-
-  $('.behavior-container .submit-button').click(function(event) {
-    var submit_action = $(this).attr('id');
-    var data = [];
-    var button_pushed = $(this);
-
-    $('.behavior-container .active').each(function(){
-      data.push($(this).data('id')); // Student ID
-      adjustIconValues($(this), button_pushed);
-      // console.log(this);
-    });
-
-    // console.log(data);
-    var course_id = $('#course-id data').attr('id');
-    var url = ('/live_class');
-    var dataToSend = {action_name: submit_action,
-                      student_ids : data,
-                      course_id: course_id}
-    // console.log(dataToSend);
-
-    $.post(url, dataToSend);
-
-    confirmMessage("Student Behaviors Updated");
-    $('.student-icon').removeClass('active');
-    data = [];
-  });
-
 // ==================OTHER BEHAVIOR ACTIONS========================
 
   $('#other').click(function() {
-
-    $('.grid-container').hide();
-    $('.behavior-container').hide();
+    $('.classroom').hide();
     $('.other-function-container').show();
+  });
 
-    $('.other-function').click(function(){
-      var submit_action = $(this).attr('id');
-      var data = [];
-      var button_pushed = $(this);
-
-      $('.behavior-container .active').each(function(){
-        data.push($(this).data('id'));
-        adjustIconValues($(this), button_pushed);
-      });
-      // console.log(data);
-      var url = ('/live_class');
-      var course_id = $('#course-id data').attr('id');
-      var dataToSend = {action_name: submit_action,
-                        student_ids : data,
-                        course_id: course_id }
-      // console.log(dataToSend);
-
-      $.post(url, dataToSend);
-      confirmMessage("Student Behaviors Updated");
-      $('.other-function-container').hide();
-      $('.grid-container').show();
-      $('.behavior-container').show();
-      $('.student-icon').removeClass('active');
-      data = [];
-    });
+  $('.other-function').click(function(){
+    $('.classroom').hide();
+    $('.behavior-container').show();
+    $('#action-form').append($('<input/>').attr({name: 'commit', value: $(this).text(), id: $(this).attr('id')}));
+    $('#action-form').submit();
+    $('#action-form #'+ $(this).attr('id')).remove();
   });
 
 // ===============ATTENDANCE ACTIONS===================
 
   $('#attendance').click(function(){
     $('.behavior-container').hide();
-    $('.attendance-container').show().find('.student-icon');
+    $('.attendance-container').show();
 
     $('.attendance-container .student-icon').each(function() {
       var icon = $(this);

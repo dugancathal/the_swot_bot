@@ -91,6 +91,15 @@ class Teachers::CoursesController < Teachers::BaseController
     end
   end
 
+  def submit_actions
+    @course = Course.includes(:enrollments).find(params[:id])
+    @action_type = StudentActionType.includes(:category).where(name: params[:commit].parameterize).first
+    params[:behaviors][:student_ids].each do |student_id|
+      enrollment_id = @course.enrollments.find {|e| e.student_id == student_id.to_i}.id
+      StudentAction.where(enrollment_id: enrollment_id, date: Date.today, student_action_type_id: @action_type.id).create
+    end
+  end
+
   private
 
   def date_params

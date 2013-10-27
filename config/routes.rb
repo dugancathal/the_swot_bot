@@ -56,6 +56,7 @@ SwotBot::Application.routes.draw do
       get '/roster', :to => 'courses#roster'
       get 'attendance', on: :member
       post :submit_attendance, on: :member
+      post :submit_actions, on: :member
       resources :assignments
       resources :assignment_categories
       post '/update_categories', :to => 'assignment_categories#update_all'
@@ -88,7 +89,7 @@ SwotBot::Application.routes.draw do
   root :to => "dashboard#index"
 end
 
- namespace 'admin' do
+namespace 'admin' do
   get 'guardian_registration', :to => 'guardian_profiles#generate_reg_cards'
   resources :guardian_profiles
   get 'guardian_logins', :to => 'dashboard#guardian_logins', :as => 'guardian_logins'
@@ -100,7 +101,7 @@ end
 
   get '/csv_importer', :to => 'student_profiles#csv_importer'
   root :to => "dashboard#index"
- end
+end
 
 resources :messages
 get '/received_message/:id', :to => 'messages#show_received', :as => 'show_received'
